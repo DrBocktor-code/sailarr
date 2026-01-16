@@ -11,6 +11,7 @@ services:
       mediacenter:
         ipv4_address: 172.30.0.4
     environment:
+    - DOCKER_API_VERSION: "1.44"
     - TZ=${TIMEZONE}
     - WATCHTOWER_CLEANUP=true
     - WATCHTOWER_REMOVE_VOLUMES=true
