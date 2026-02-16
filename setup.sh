@@ -1575,7 +1575,7 @@ if [[ $autoconfig_choice =~ ^[Yy]$ ]]; then
         "dashdot"
         "autoscan"
         "tautulli"
-        "watchtower"
+      #  "watchtower"
         "plextraktsync"
         "pinchflat"
     )
