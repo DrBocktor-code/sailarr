@@ -1,41 +1,58 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-
-echo "--- Updating system packages ---"
-sudo apt update && sudo apt upgrade -y
-
-echo "--- Installing initial prerequisites ---"
-sudo apt install -y ca-certificates curl gnupg lsb-release apt-transport-https
-
-echo "--- Setting up Docker GPG key ---"
-sudo mkdir -p /etc/apt/keyrings
-# Remove old key if it exists to prevent errors on re-run
-sudo rm -f /etc/apt/keyrings/docker.gpg
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-echo "--- Adding Docker repository to sources ---"
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-echo "--- Installing Docker Engine ---"
+echo "=== Updating system ==="
 sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt upgrade -y
 
-echo "--- Enabling and starting Docker service ---"
+echo "=== Installing prerequisites ==="
+sudo apt install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release \
+    apt-transport-https
+
+echo "=== Creating Docker keyring directory ==="
+sudo mkdir -p /etc/apt/keyrings
+
+if [ ! -f /etc/apt/keyrings/docker.gpg ]; then
+    echo "=== Adding Docker GPG key ==="
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+else
+    echo "=== Docker GPG key already exists, skipping ==="
+fi
+
+echo "=== Adding Docker repository ==="
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+echo "=== Updating package index ==="
+sudo apt update
+
+echo "=== Installing Docker Engine & Compose ==="
+sudo apt install -y \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
+
+echo "=== Enabling and starting Docker ==="
 sudo systemctl enable --now docker
 
-echo "--- Adding current user to the docker group ---"
-sudo usermod -aG docker $USER
+echo "=== Adding user '$USER' to docker group ==="
+sudo usermod -aG docker "$USER"
 
-echo "-------------------------------------------------------"
-echo "Installation complete!"
-echo "IMPORTANT: To apply group changes without logging out,"
-echo "run the following command manually:"
-echo "  newgrp docker"
-echo "-------------------------------------------------------"
+echo "=== Applying new group membership ==="
+# Only works in interactive shells; safe to ignore if running via SSH
+newgrp docker <<EOF
+echo "=== Docker group applied ==="
+EOF
 
-# Note: newgrp starts a new shell session. 
-# It is usually the final command in a script or run manually.
-newgrp docker
+echo "=== Docker installation complete ==="
+echo "Log out and back in if Docker commands still require sudo."
