@@ -1048,7 +1048,7 @@ if [ "$SKIP_CONFIGURATION" = false ]; then
         "Timezone Configuration" \
         "Examples: Europe/Madrid, America/New_York, Asia/Tokyo" \
         "Enter timezone [press Enter for default]: " \
-        "${TIMEZONE:-Europe/Madrid}" \
+        "${TIMEZONE:-Australia/Melbourne}" \
         "false" \
         "USER_TIMEZONE"
 
@@ -1575,7 +1575,7 @@ if [[ $autoconfig_choice =~ ^[Yy]$ ]]; then
         "dashdot"
         "autoscan"
         "tautulli"
-      #  "watchtower"
+        "watchtower"
         "plextraktsync"
         "pinchflat"
     )
