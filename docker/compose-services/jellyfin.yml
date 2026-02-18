@@ -1,7 +1,7 @@
 # Jellyfin Media Server
 
 services:
-  plex:
+  jellyfin:
     image: ${JELLYFIN_IMAGE}:${JELLYFIN_TAG}
     env_file:
       - ../.env.defaults
