@@ -15,7 +15,7 @@ include:
   - compose-services/traefik-socket-proxy.yml
   
   # Media Server
-  - compose-services/plex.yml
+  #- compose-services/plex.yml
   - compose-services/jellyfin.yml
   
   # Request Management
