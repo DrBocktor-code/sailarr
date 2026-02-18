@@ -1,0 +1,34 @@
+# Jellyfin Media Server
+
+services:
+  plex:
+    image: ${JELLYFIN_IMAGE}:${JELLYFIN_TAG}
+    env_file:
+      - ../.env.defaults
+      - ../.env.local
+    container_name: jellyfin
+    networks:
+      - mediacenter
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - 8096:8096
+    restart: unless-stopped
+    environment:
+      - PUID=${JELLYFIN_UID}
+      - PGID=${MEDIACENTER_GID}
+      - TZ=${TIMEZONE}
+      - VERSION=docker
+    volumes:
+      - ${ROOT_DIR}/config/jellyfin-config:/config
+      - ${ROOT_DIR}/data:/data
+    depends_on:
+      overseerr:
+        condition: service_healthy
+        restart: true
+      rclone:
+        condition: service_healthy
+        restart: true
+networks:
+  mediacenter:
+    external: true
