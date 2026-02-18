@@ -22,6 +22,11 @@ services:
     volumes:
       - ${ROOT_DIR}/config/jellyfin-config:/config
       - ${ROOT_DIR}/data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`${JELLYFIN_TRAEFIK_NAME}.${DOMAIN_NAME}`)
+      - traefik.http.routers.jellyfin.entrypoints=web
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     depends_on:
       overseerr:
         condition: service_healthy
