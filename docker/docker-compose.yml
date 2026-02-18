@@ -16,6 +16,7 @@ include:
   
   # Media Server
   - compose-services/plex.yml
+  - compose-services/jellyfin.yml
   
   # Request Management
   - compose-services/overseerr.yml
